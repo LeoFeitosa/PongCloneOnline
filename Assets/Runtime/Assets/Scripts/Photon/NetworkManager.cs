@@ -14,7 +14,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField]
     string roomName;
 
-    public static NetworkManager Instance {get; private set;}
+    public static NetworkManager Instance { get; private set; }
 
     private void Awake()
     {
@@ -26,14 +26,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        Connect();
     }
 
-    void Connect()
+    void Start()
     {
         _networkLog = FindObjectOfType<NetworkLog>();
-        SetNickName("nome_jogador_"+Random.Range(1, 999));
         PhotonNetwork.ConnectUsingSettings();
     }
 
@@ -69,7 +66,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         _networkLog.SetLog("Entrou no lobby", NetworkLog.Color.green);
-        PhotonNetwork.JoinRoom(roomName);
+        //PhotonNetwork.JoinRoom(roomName);
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)

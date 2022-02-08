@@ -8,21 +8,25 @@ public class NetworkLog : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI log;
 
+    [SerializeField]
+    int secondsToClearLog = 3;
+
     public enum Color
     {
         red, yellow, green
     };
 
-    private void Start()
+    void Start()
     {
         SetLog("Conectando...", Color.yellow);
+        StartCoroutine(ClearLog());
     }
 
     public void SetLog(string text, Color color)
     {
         switch (color)
         {
-            case Color.red :
+            case Color.red:
                 log.text += "\n<color=#FF0000>" + text + "</color>";
                 break;
             case Color.yellow:
@@ -35,5 +39,11 @@ public class NetworkLog : MonoBehaviour
                 log.text += "\n<color=#DFFF00>" + text + "</color>";
                 break;
         }
+    }
+
+    IEnumerator ClearLog()
+    {
+        yield return new WaitForSeconds(secondsToClearLog);
+        log.text = "";
     }
 }
