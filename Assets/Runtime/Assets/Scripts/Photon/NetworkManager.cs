@@ -12,7 +12,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     byte _maxPlayers = 2;
 
     [SerializeField]
-    string roomName;
+    string _roomName;
+
+    public List<RoomInfo> RoomList { get; private set; }
 
     public static NetworkManager Instance { get; private set; }
 
@@ -31,15 +33,23 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Start()
     {
         _networkLog = FindObjectOfType<NetworkLog>();
+        PhotonNetwork.GameVersion = "1.0.0";
         PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
-    private void CreateRoom()
+    public void CreateRoom(string roomName)
     {
-        _networkLog.SetLog($"Criando a sala {roomName}...", NetworkLog.Color.yellow);
+        _roomName = roomName;
+        _networkLog.SetLog($"Criando a sala {_roomName}...", NetworkLog.Color.yellow);
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = _maxPlayers;
-        PhotonNetwork.CreateRoom(roomName, roomOptions, null);
+        PhotonNetwork.CreateRoom(_roomName, roomOptions, null);
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        RoomList = roomList;
     }
 
     public override void OnConnectedToMaster()
@@ -65,23 +75,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     //Entrou no lobbby e chama funcao para entrar na sala
     public override void OnJoinedLobby()
     {
-        _networkLog.SetLog("Entrou no lobby", NetworkLog.Color.green);
-        //PhotonNetwork.JoinRoom(roomName);
+        _networkLog.SetLog("Entrou no lobby com sucesso!", NetworkLog.Color.green);
+    }
+
+    public void JoinRoom(string room)
+    {
+        PhotonNetwork.JoinRoom(room);
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         _networkLog.SetLog($"ERRO AO ENTRAR NA SALA: {message}. CODIGO {returnCode}", NetworkLog.Color.red);
-
-        if (returnCode == ErrorCode.GameDoesNotExist)
-        {
-            CreateRoom();
-        }
     }
 
     public override void OnJoinedRoom()
     {
-        _networkLog.SetLog($"O jogador {PhotonNetwork.NickName} entrou na sala {roomName}", NetworkLog.Color.green);
+        _networkLog.SetLog($"O jogador {PhotonNetwork.NickName} entrou na sala {_roomName}", NetworkLog.Color.green);
 
         //aqui deve instanciar o player na tela
     }
