@@ -66,15 +66,13 @@ public class MenuController : MonoBehaviourPunCallbacks
 
         foreach (Photon.Realtime.RoomInfo room in NetworkManager.Instance.RoomList)
         {
-            if (room.PlayerCount == 0)
+            if (room.IsVisible && room.PlayerCount < room.MaxPlayers)
             {
-                continue;
+                GameObject newButtomRoom = Instantiate(_buttomRoom, _content) as GameObject;
+                newButtomRoom.transform.Find("TextRoomName").GetComponent<TextMeshProUGUI>().text = room.Name;
+                newButtomRoom.transform.Find("TextPlayerCount").GetComponent<TextMeshProUGUI>().text = $"{room.PlayerCount}/{room.MaxPlayers}";
+                newButtomRoom.GetComponent<Button>().onClick.AddListener(delegate { JoinRoom(room.Name); });
             }
-
-            GameObject newButtomRoom = Instantiate(_buttomRoom, _content) as GameObject;
-            newButtomRoom.transform.Find("TextNameRom").GetComponent<TextMeshProUGUI>().text = room.Name;
-            newButtomRoom.transform.Find("TextPlayersInRom").GetComponent<TextMeshProUGUI>().text = $"{room.PlayerCount}/{room.MaxPlayers}";
-            newButtomRoom.GetComponent<Button>().onClick.AddListener(delegate { JoinRoom(room.Name); });
         }
     }
 

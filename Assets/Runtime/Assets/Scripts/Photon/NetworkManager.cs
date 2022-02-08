@@ -11,7 +11,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     [SerializeField]
     byte _maxPlayers = 2;
 
-    [SerializeField]
     string _roomName;
 
     public List<RoomInfo> RoomList { get; private set; }
@@ -44,12 +43,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _networkLog.SetLog($"Criando a sala {_roomName}...", NetworkLog.Color.yellow);
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = _maxPlayers;
-        PhotonNetwork.CreateRoom(_roomName, roomOptions, null);
+        roomOptions.IsVisible = true;
+        roomOptions.IsOpen = true;
+        PhotonNetwork.CreateRoom(_roomName, roomOptions, TypedLobby.Default);
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         RoomList = roomList;
+        Debug.Log(roomList.Count);
     }
 
     public override void OnConnectedToMaster()
@@ -81,6 +83,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void JoinRoom(string room)
     {
         PhotonNetwork.JoinRoom(room);
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        _networkLog.SetLog($"ERRO AO CRIAR A SALA: {message}. CODIGO {returnCode}", NetworkLog.Color.red);
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
