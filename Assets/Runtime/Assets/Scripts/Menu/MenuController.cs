@@ -52,27 +52,19 @@ public class MenuController : MonoBehaviourPunCallbacks
         }
     }
 
+    [PunRPC]
     void ListRooms()
     {
         ClearListRooms();
         Debug.Log("ok");
-
-        /* if (NetworkManager.Instance.RoomList.Count <= 0)
-         {
-             GameObject newButtomRoom = Instantiate(_buttomRoom, _content) as GameObject;
-             newButtomRoom.transform.Find("TextNameRom").GetComponent<TextMeshProUGUI>().text = "Sem salas criadas";
-             newButtomRoom.transform.Find("TextPlayersInRom").GetComponent<TextMeshProUGUI>().text = "";
-         }*/
-
         foreach (Photon.Realtime.RoomInfo room in NetworkManager.Instance.RoomList)
         {
-            if (room.IsVisible && room.PlayerCount < room.MaxPlayers)
-            {
-                GameObject newButtomRoom = Instantiate(_buttomRoom, _content) as GameObject;
-                newButtomRoom.transform.Find("TextRoomName").GetComponent<TextMeshProUGUI>().text = room.Name;
-                newButtomRoom.transform.Find("TextPlayerCount").GetComponent<TextMeshProUGUI>().text = $"{room.PlayerCount}/{room.MaxPlayers}";
-                newButtomRoom.GetComponent<Button>().onClick.AddListener(delegate { JoinRoom(room.Name); });
-            }
+
+            GameObject newButtomRoom = Instantiate(_buttomRoom, _content) as GameObject;
+            newButtomRoom.transform.Find("TextRoomName").GetComponent<TextMeshProUGUI>().text = room.Name;
+            newButtomRoom.transform.Find("TextPlayerCount").GetComponent<TextMeshProUGUI>().text = $"{room.PlayerCount}/{room.MaxPlayers}";
+            newButtomRoom.GetComponent<Button>().onClick.AddListener(delegate { JoinRoom(room.Name); });
+
         }
     }
 
@@ -81,6 +73,7 @@ public class MenuController : MonoBehaviourPunCallbacks
         NetworkManager.Instance.CreateRoom(_inputRoomName.text);
         ListRooms();
     }
+
     public void JoinRoom(string roomName)
     {
         NetworkManager.Instance.JoinRoom(roomName);

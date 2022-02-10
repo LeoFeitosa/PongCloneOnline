@@ -13,8 +13,10 @@ GameObject:
   - component: {fileID: 103302249}
   - component: {fileID: 1773628670465802831}
   - component: {fileID: -3139596475562286489}
+  - component: {fileID: 471906646}
+  - component: {fileID: 471906647}
   m_Layer: 7
-  m_Name: Player1
+  m_Name: PlayerBar
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -144,6 +146,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e10eb015fdd994d924961562e99ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7
-  limitMove: 4.5
-  playerType: 0
+  _speed: 5
+  _limitMove: 4.57
+--- !u!114 &471906646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8202076335716342773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7cb724808c322458aa4d15f5035fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 3
+--- !u!114 &471906647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8202076335716342773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 471906646}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0

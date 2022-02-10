@@ -3,13 +3,13 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     NetworkLog _networkLog;
 
-    [SerializeField]
-    byte _maxPlayers = 2;
+    [SerializeField] byte _maxPlayers = 2;
 
     string _roomName;
 
@@ -21,20 +21,24 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         if (Instance != null && Instance != this)
         {
-            gameObject.SetActive(false);
+            Destroy(gameObject);
             return;
         }
 
-        Instance = this;
         DontDestroyOnLoad(gameObject);
+        Instance = this;
     }
 
     void Start()
     {
         _networkLog = FindObjectOfType<NetworkLog>();
-        PhotonNetwork.GameVersion = "1.0.0";
-        PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.AutomaticallySyncScene = true;
+
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.GameVersion = "1.0.0";
+            PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.AutomaticallySyncScene = true;
+        }
     }
 
     public void CreateRoom(string roomName)
@@ -98,13 +102,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         _networkLog.SetLog($"O jogador {PhotonNetwork.NickName} entrou na sala {_roomName}", NetworkLog.Color.green);
-
-        //aqui deve instanciar o player na tela
+        SceneManager.LoadScene("Game");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         _networkLog.SetLog($"O jogador {newPlayer.NickName} entrou na sala", NetworkLog.Color.green);
+        SceneManager.LoadScene("Game");
     }
 
     public override void OnLeftRoom()

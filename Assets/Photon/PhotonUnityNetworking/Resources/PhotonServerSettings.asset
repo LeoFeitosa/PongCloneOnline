@@ -36,6 +36,18 @@ MonoBehaviour:
   RpcList:
   - ClickRpc
   - DestroyRpc
+  - InitialMove
+  - InputPlayer1
+  - InputPlayer
+  - RandomDirection
+  - Move
+  - OnBecameInvisible
+  - OnCollisionEnter2D
+  - Start
+  - ListRooms
+  - SetScore
+  - RPCStartGame
+  - ShowScore
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

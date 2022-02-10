@@ -1,18 +1,24 @@
+using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 
 public class SquareController : MonoBehaviour
 {
+    [SerializeField] Transform _spawnPoint;
     [SerializeField] float speed = 1.5f;
     [SerializeField] AudioClip collisionPlayerSound;
     [SerializeField] AudioClip collisionUpDownSound;
     [SerializeField] AudioClip scoreSound;
     Vector2 direction;
-    ScoreController score;
+    ScoreController _score;
 
     void Start()
     {
-        score = FindObjectOfType<ScoreController>();
+        _score = FindObjectOfType<ScoreController>();
+    }
+
+    public void StartGame()
+    {
         StartCoroutine(InitialMove());
     }
 
@@ -43,14 +49,14 @@ public class SquareController : MonoBehaviour
 
     void Move()
     {
-        GetComponent<Rigidbody2D>().velocity = direction.normalized * speed;
+        GetComponent<Rigidbody2D>().velocity = direction.normalized * speed;// * (float)(PhotonNetwork.Time - info.SentServerTime);
     }
 
     void OnBecameInvisible()
     {
         AudioController.Instance.PlayAudioCue(scoreSound);
-        score.SetScore((transform.position.x < 0) ? 2 : 1);
-        StartCoroutine(InitialMove());
+        _score.SetScore((transform.position.x < 0) ? 2 : 1);
+        StartGame();
     }
 
     void OnCollisionEnter2D(Collision2D collision)

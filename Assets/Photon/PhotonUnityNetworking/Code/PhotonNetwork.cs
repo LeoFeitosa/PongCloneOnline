@@ -66,6 +66,11 @@ namespace Photon.Pun
         /// <summary>Version number of PUN. Used in the AppVersion, which separates your playerbase in matchmaking.</summary>
         public const string PunVersion = "2.40";
 
+        public static void Instantiate(string v, Vector3 vector3)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>Version number of your game. Setting this updates the AppVersion, which separates your playerbase in matchmaking.</summary>
         /// <remarks>
         /// In PUN, the GameVersion is only one component of the LoadBalancingClient.AppVersion.
