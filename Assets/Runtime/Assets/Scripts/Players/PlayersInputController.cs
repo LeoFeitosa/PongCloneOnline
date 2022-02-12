@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class PlayersInputController : MonoBehaviour
 {
-    PhotonView _photonView;
+    [Header("Config player")]
     [SerializeField] float _speed = 5;
     [SerializeField] float _limitMove = 5;
+
+    PhotonView _photonView;
     Vector2 _movement = Vector2.zero;
     Rigidbody2D _rb2D;
 
@@ -22,7 +24,7 @@ public class PlayersInputController : MonoBehaviour
 
     public void InputPlayer()
     {
-        if (!_photonView.IsMine) 
+        if (!_photonView.IsMine)
         {
             return;
         }

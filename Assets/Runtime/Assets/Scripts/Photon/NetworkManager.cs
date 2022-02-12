@@ -1,13 +1,14 @@
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     NetworkLog _networkLog;
+    MenuController _menuController;
+    SpawnController _spawnController;
 
     [SerializeField] byte _maxPlayers = 2;
 
@@ -32,30 +33,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Start()
     {
         _networkLog = FindObjectOfType<NetworkLog>();
+        _menuController = FindObjectOfType<MenuController>();
+        _spawnController = FindObjectOfType<SpawnController>();
 
         if (!PhotonNetwork.IsConnected)
         {
+            _networkLog.SetLog($"Conectando...", NetworkLog.Color.yellow);
             PhotonNetwork.GameVersion = "1.0.0";
             PhotonNetwork.ConnectUsingSettings();
             PhotonNetwork.AutomaticallySyncScene = true;
         }
-    }
-
-    public void CreateRoom(string roomName)
-    {
-        _roomName = roomName;
-        _networkLog.SetLog($"Criando a sala {_roomName}...", NetworkLog.Color.yellow);
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = _maxPlayers;
-        roomOptions.IsVisible = true;
-        roomOptions.IsOpen = true;
-        PhotonNetwork.CreateRoom(_roomName, roomOptions, TypedLobby.Default);
-    }
-
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        RoomList = roomList;
-        Debug.Log(roomList.Count);
     }
 
     public override void OnConnectedToMaster()
@@ -69,12 +56,29 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LocalPlayer.NickName = nickName;
     }
 
+    public void CreateRoom(string roomName)
+    {
+        _roomName = roomName;
+        _networkLog.SetLog($"Criando a sala {_roomName}...", NetworkLog.Color.yellow);
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.MaxPlayers = _maxPlayers;
+        roomOptions.IsVisible = true;
+        roomOptions.IsOpen = true;
+        PhotonNetwork.CreateRoom(_roomName, roomOptions, TypedLobby.Default);
+    }
+
+    public override void OnCreatedRoom()
+    {
+        _networkLog.SetLog($"Sala {_roomName} criada com sucesso!", NetworkLog.Color.green);
+    }
+
     public void JoinLobby()
     {
-        if (PhotonNetwork.InLobby == false)
+        if (!PhotonNetwork.InLobby)
         {
-            _networkLog.SetLog("Entrando no lobby...", NetworkLog.Color.yellow);
             PhotonNetwork.JoinLobby();
+            _networkLog.SetLog("Entrando no lobby...", NetworkLog.Color.yellow);
+            _menuController.ActiveNickName();
         }
     }
 
@@ -84,9 +88,46 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _networkLog.SetLog("Entrou no lobby com sucesso!", NetworkLog.Color.green);
     }
 
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        RoomList = roomList;
+    }
+
     public void JoinRoom(string room)
     {
         PhotonNetwork.JoinRoom(room);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        _menuController.ActiveGame();
+
+        if (PhotonNetwork.PlayerList.Length == 1)
+        {
+            PhotonNetwork.Instantiate(Path.Combine("PlayerPrefabs", "PlayerBar"), _spawnController.positionPlayer1.position, Quaternion.identity, 0);
+        }
+        else
+        {
+            PhotonNetwork.Instantiate(Path.Combine("PlayerPrefabs", "PlayerBar"), _spawnController.positionPlayer2.position, Quaternion.identity, 0);
+        }
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        _menuController.ActiveGame();
+        _networkLog.SetLog($"O jogador {newPlayer.NickName} entrou na sala", NetworkLog.Color.green);
+        PhotonNetwork.Instantiate(Path.Combine("SquarePrefabs", "Square"), _spawnController.positionSquare.position, Quaternion.identity, 0);
+    }
+
+    public override void OnLeftRoom()
+    {
+        _networkLog.SetLog("Voce saiu da sala", NetworkLog.Color.yellow);
+    }
+
+    #region Errors      
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        _networkLog.SetLog($"O jogador {otherPlayer.NickName} saiu da sala", NetworkLog.Color.yellow);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -99,30 +140,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _networkLog.SetLog($"ERRO AO ENTRAR NA SALA: {message}. CODIGO {returnCode}", NetworkLog.Color.red);
     }
 
-    public override void OnJoinedRoom()
-    {
-        _networkLog.SetLog($"O jogador {PhotonNetwork.NickName} entrou na sala {_roomName}", NetworkLog.Color.green);
-        SceneManager.LoadScene("Game");
-    }
-
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        _networkLog.SetLog($"O jogador {newPlayer.NickName} entrou na sala", NetworkLog.Color.green);
-        SceneManager.LoadScene("Game");
-    }
-
-    public override void OnLeftRoom()
-    {
-        _networkLog.SetLog("Voce saiu da sala", NetworkLog.Color.yellow);
-    }
-
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-        _networkLog.SetLog($"O jogador {otherPlayer.NickName} saiu da sala", NetworkLog.Color.yellow);
-    }
-
     public override void OnErrorInfo(ErrorInfo errorInfo)
     {
         _networkLog.SetLog($"OCORREU UM ERRO: {errorInfo.Info}", NetworkLog.Color.red);
     }
+    #endregion Errors
 }

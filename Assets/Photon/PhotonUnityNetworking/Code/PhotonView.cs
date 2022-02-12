@@ -95,8 +95,6 @@ namespace Photon.Pun
         [FormerlySerializedAs("prefixBackup")]
         public int prefixField = -1;
 
-
-
         /// <summary>
         /// This is the InstantiationData that was passed when calling PhotonNetwork.Instantiate* (if that was used to spawn this prefab)
         /// </summary>

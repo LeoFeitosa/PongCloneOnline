@@ -4,20 +4,34 @@ using UnityEngine;
 
 public class SquareController : MonoBehaviour
 {
-    [SerializeField] Transform _spawnPoint;
+    PhotonView _photonView;
+
+    [Header("Config Square")]
     [SerializeField] float speed = 1.5f;
+
+    [Header("Config Audio")]
     [SerializeField] AudioClip collisionPlayerSound;
     [SerializeField] AudioClip collisionUpDownSound;
     [SerializeField] AudioClip scoreSound;
+
+    Rigidbody2D _rb2D;
     Vector2 direction;
     ScoreController _score;
 
-    void Start()
+    void Awake()
     {
+        _photonView = GetComponent<PhotonView>();
+        _rb2D = GetComponent<Rigidbody2D>();
         _score = FindObjectOfType<ScoreController>();
     }
 
-    public void StartGame()
+    void Start()
+    {
+        _photonView.RPC("StartMove", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void StartMove()
     {
         StartCoroutine(InitialMove());
     }
@@ -49,14 +63,18 @@ public class SquareController : MonoBehaviour
 
     void Move()
     {
-        GetComponent<Rigidbody2D>().velocity = direction.normalized * speed;// * (float)(PhotonNetwork.Time - info.SentServerTime);
+        _rb2D.velocity = direction.normalized * speed;
     }
 
     void OnBecameInvisible()
     {
         AudioController.Instance.PlayAudioCue(scoreSound);
         _score.SetScore((transform.position.x < 0) ? 2 : 1);
-        StartGame();
+
+        if (enabled)
+        {
+            StartCoroutine(InitialMove());
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)

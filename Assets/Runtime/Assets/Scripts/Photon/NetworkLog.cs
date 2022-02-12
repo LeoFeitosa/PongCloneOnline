@@ -18,7 +18,6 @@ public class NetworkLog : MonoBehaviour
 
     void Start()
     {
-        SetLog("Conectando...", Color.yellow);
         StartCoroutine(ClearLog());
     }
 
