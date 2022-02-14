@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4891669680219310251}
   - component: {fileID: 445995945669911993}
   - component: {fileID: 7477075174718562711}
-  - component: {fileID: 215797918690674867}
+  - component: {fileID: 1215709427936295437}
   m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dbe7d259783750479c3ab0ab130fa69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7.5
+  speed: 280
   collisionPlayerSound: {fileID: 8300000, guid: f4ee8abe4c7bb364db7e2c5a986ffc69, type: 3}
   collisionUpDownSound: {fileID: 8300000, guid: 31889edc93896824ebb682e79a28bdba, type: 3}
   scoreSound: {fileID: 8300000, guid: c45a338ce0fe8654faa2d18e30237008, type: 3}
@@ -147,7 +147,7 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 2
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -171,7 +171,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 7477075174718562711}
-  - {fileID: 215797918690674867}
+  - {fileID: 1215709427936295437}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 1
   m_TeleportIfDistanceGreaterThan: 3
---- !u!114 &215797918690674867
+--- !u!114 &1215709427936295437
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

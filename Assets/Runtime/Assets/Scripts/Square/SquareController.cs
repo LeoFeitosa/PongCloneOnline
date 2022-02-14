@@ -18,6 +18,8 @@ public class SquareController : MonoBehaviour
     Vector2 direction;
     ScoreController _score;
 
+    Vector2 networkPosition;
+
     void Awake()
     {
         _photonView = GetComponent<PhotonView>();
@@ -27,10 +29,17 @@ public class SquareController : MonoBehaviour
 
     void Start()
     {
-        _photonView.RPC("StartMove", RpcTarget.All);
+        StartMove();
     }
 
-    [PunRPC]
+    public void FixedUpdate()
+    {
+        if (!_photonView.IsMine)
+        {
+            _rb2D.position = Vector3.MoveTowards(_rb2D.position, networkPosition, Time.fixedDeltaTime);
+        }
+    }
+
     void StartMove()
     {
         StartCoroutine(InitialMove());
@@ -63,7 +72,7 @@ public class SquareController : MonoBehaviour
 
     void Move()
     {
-        _rb2D.velocity = direction.normalized * speed;
+        _rb2D.velocity = direction.normalized * speed * Time.fixedDeltaTime;
     }
 
     void OnBecameInvisible()
@@ -87,6 +96,23 @@ public class SquareController : MonoBehaviour
         else if (collision.gameObject.CompareTag("CollisionUpDown"))
         {
             AudioController.Instance.PlayAudioCue(collisionUpDownSound);
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(this._rb2D.position);
+            stream.SendNext(this._rb2D.velocity);
+        }
+        else
+        {
+            networkPosition = (Vector3)stream.ReceiveNext();
+            _rb2D.velocity = (Vector3)stream.ReceiveNext();
+
+            float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTimestamp));
+            networkPosition += _rb2D.velocity * lag;
         }
     }
 }
